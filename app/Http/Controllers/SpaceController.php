@@ -49,14 +49,27 @@ class SpaceController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => ['required', 'min:3'],
-            'address' => ['required', 'min:5'],
-            'description' => ['required', 'min:10'],
-            'latitude' => ['required'],
-            'longitude' => ['required'],
+            'title'         => ['required', 'min:3'],
+            'address'       => ['required', 'min:5'],
+            'description'   => ['required', 'min:10'],
+            'latitude'      => ['required'],
+            'longitude'     => ['required'],
+            'photo'         =>['required'],
+            'photo.*'       => ['mimes: jpg, png']
         ]);
 
-        $request->user()->spaces()->create($request->all());
+        $space = $request->user()->spaces()->create($request->except('photo'));
+
+        $spacePhoto =[];
+
+        foreach ($request->file('photo') as $file) {
+            $path = Storage::disk('public')->putFile('spaces', $file);
+            $spacePhoto[]=[
+                'space_id'  =>$space->id,
+                'path'      =>$path
+            ];
+        }
+        $space->photos()->insert($spacePhoto);
 
         return redirect()->route('space.index')->with('status', 'Space created!');
     }
