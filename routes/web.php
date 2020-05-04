@@ -23,4 +23,6 @@ Route::get('/home', 'HomeController@index')->name('home')->middleware('verified'
 
 Route::resource('space', 'SpaceController');
 
+Route::get('/browse/space', 'SpaceController@browse');
+
 

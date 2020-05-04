@@ -15,13 +15,14 @@ if (navigator.geolocation) {
 
         // Instantiate (and display) a map object:
         let map = new H.Map(
-            document.getElementById('mapContainer'),
-            defaultLayers.vector.normal.map, {
-                zoom: 13,
-                center: objLocalCoord,
-                pixelRatio: window.devicePixelRatio || 1
-            });
-        window.addEventListener('resize', () => map.getViewPort().resize());
+                document.getElementById('mapContainer'),
+                defaultLayers.vector.normal.map,
+                {
+                    zoom: 13,
+                    center: objLocalCoord,
+                    pixelRatio: window.devicePixelRatio || 1
+                });
+            window.addEventListener('resize', () => map.getViewPort().resize());
 
         let ui = H.ui.UI.createDefault(map, defaultLayers);
         let mapEvents = new H.mapevents.MapEvents(map);
@@ -49,7 +50,7 @@ if (navigator.geolocation) {
             // disable the default draggability of the underlying map
             // and calculate the offset between mouse and target's position
             // when starting to drag a marker object:
-            map.addEventListener('dragstart', function (ev) {
+            map.addEventListener('dragstart', function(ev) {
                 let target = ev.target,
                     pointer = ev.currentPointer;
                 if (target instanceof H.map.Marker) {
@@ -63,7 +64,7 @@ if (navigator.geolocation) {
 
             // Listen to the drag event and move the position of the marker
             // as necessary
-            map.addEventListener('drag', function (ev) {
+            map.addEventListener('drag', function(ev) {
                 let target = ev.target,
                     pointer = ev.currentPointer;
                 if (target instanceof H.map.Marker) {
@@ -77,7 +78,7 @@ if (navigator.geolocation) {
 
             // re-enable the default draggability of the underlying map
             // when dragging has completed
-            map.addEventListener('dragend', function (ev) {
+            map.addEventListener('dragend', function(ev) {
                 let target = ev.target;
                 if (target instanceof H.map.Marker) {
                     behavior.enable();
@@ -103,11 +104,10 @@ if (navigator.geolocation) {
                 resolve(
                     fetch(`/api/spaces?lat=${latitude}&lng=${longitude}&rad=${radius}`)
                     .then((res) => res.json())
-                    .then(function (data) {
+                    .then(function(data) {
                         data.forEach(function (value, index) {
                             let marker = new H.map.Marker({
-                                lat: value.latitude,
-                                lng: value.longitude
+                                lat: value.latitude, lng: value.longitude
                             });
                             spaces.push(marker);
                         })
@@ -124,9 +124,9 @@ if (navigator.geolocation) {
         function init(latitude, longitude, radius) {
             clearSpace();
             fetchSpaces(latitude, longitude, radius)
-                .then(function () {
-                    map.addObjects(spaces);
-                });
+            .then(function () {
+                map.addObjects(spaces);
+            });
         }
 
         if (window.action == 'browse') {
@@ -144,12 +144,12 @@ if (navigator.geolocation) {
         // Route to space
         let urlParams = new URLSearchParams(window.location.search);
 
-        function calculateRouteAtoB(platform) {
+        function calculateRouteAtoB (platform) {
             let router = platform.getRoutingService(),
                 routeRequestParam = {
                     mode: 'fastest;car',
                     representation: 'display',
-                    routeattributes: 'summary',
+                    routeattributes : 'summary',
                     maneuverattributes: 'direction,action',
                     waypoint0: urlParams.get('from'),
                     waypoint1: urlParams.get('to')
@@ -173,13 +173,13 @@ if (navigator.geolocation) {
             alert('Can\'t reach the remote server' + error);
         }
 
-        function addRouteShapeToMap(route) {
+        function addRouteShapeToMap(route){
             let linestring = new H.geo.LineString(),
                 routeShape = route.shape,
                 startPoint, endPoint,
                 polyline, routeline, svgStartMark, iconStart, startMarker, svgEndMark, iconEnd, endMarker;
 
-            routeShape.forEach(function (point) {
+            routeShape.forEach(function(point) {
                 let parts = point.split(',');
                 linestring.pushLatLngAlt(parts[0], parts[1]);
             });
@@ -189,10 +189,10 @@ if (navigator.geolocation) {
 
             polyline = new H.map.Polyline(linestring, {
                 style: {
-                    lineWidth: 5,
-                    strokeColor: 'rgba(0, 128, 255, 0.7)',
-                    lineTailCap: 'arrow-tail',
-                    lineHeadCap: 'arrow-head'
+                lineWidth: 5,
+                strokeColor: 'rgba(0, 128, 255, 0.7)',
+                lineTailCap: 'arrow-tail',
+                lineHeadCap: 'arrow-head'
                 }
             });
 
@@ -210,34 +210,24 @@ if (navigator.geolocation) {
             svgStartMark = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 52 52" style="enable-background:new 0 0 52 52;" xml:space="preserve" width="512px" height="512px"><g><path d="M38.853,5.324L38.853,5.324c-7.098-7.098-18.607-7.098-25.706,0h0  C6.751,11.72,6.031,23.763,11.459,31L26,52l14.541-21C45.969,23.763,45.249,11.72,38.853,5.324z M26.177,24c-3.314,0-6-2.686-6-6  s2.686-6,6-6s6,2.686,6,6S29.491,24,26.177,24z" data-original="#1081E0" class="active-path" data-old_color="#1081E0" fill="#C12020"/></g> </svg>`;
 
             iconStart = new H.map.Icon(svgStartMark, {
-                size: {
-                    h: 45,
-                    w: 45
-                }
+                size: { h: 45, w: 45 }
             });
 
             startMarker = new H.map.Marker({
                 lat: startPoint.latitude,
                 lng: startPoint.longitude
-            }, {
-                icon: iconStart
-            });
+            }, { icon: iconStart });
 
             svgEndMark = `<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 52 52" style="enable-background:new 0 0 52 52;" xml:space="preserve"> <path style="fill:#1081E0;" d="M38.853,5.324L38.853,5.324c-7.098-7.098-18.607-7.098-25.706,0h0 C6.751,11.72,6.031,23.763,11.459,31L26,52l14.541-21C45.969,23.763,45.249,11.72,38.853,5.324z M26.177,24c-3.314,0-6-2.686-6-6 s2.686-6,6-6s6,2.686,6,6S29.491,24,26.177,24z"/></svg>`;
 
             iconEnd = new H.map.Icon(svgEndMark, {
-                size: {
-                    h: 45,
-                    w: 45
-                }
+                size: { h: 45, w: 45 }
             });
 
             endMarker = new H.map.Marker({
                 lat: endPoint.latitude,
                 lng: endPoint.longitude
-            }, {
-                icon: iconEnd
-            });
+            }, { icon: iconEnd });
 
 
             // Add the polyline to the map
@@ -249,7 +239,7 @@ if (navigator.geolocation) {
             });
         }
 
-        function addSummaryToPanel(summary) {
+        function addSummaryToPanel(summary){
             const sumDiv = document.getElementById('summary');
             const markup = `
                 <ul>
@@ -264,7 +254,7 @@ if (navigator.geolocation) {
             calculateRouteAtoB(platform);
 
             Number.prototype.toMMSS = function () {
-                return Math.floor(this / 60) + ' minutes ' + (this % 60) + ' seconds.';
+                return  Math.floor(this / 60)  +' minutes '+ (this % 60)  + ' seconds.';
             }
         }
 
@@ -278,3 +268,4 @@ if (navigator.geolocation) {
 } else {
     console.error("Geolocation is not suppported by this browser!");
 }
+
